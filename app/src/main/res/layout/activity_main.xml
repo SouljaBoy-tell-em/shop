@@ -8,72 +8,26 @@
     android:layout_height="match_parent">
 
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="137dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginStart="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo" />
-
-    <EditText
-        android:id="@+id/searchObject"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/edittext_explore_background"
-        android:drawableStart="@drawable/edittext_explore"
-        android:hint="Поиск"
-        android:inputType="textPersonName"
-        android:textAppearance="@android:style/TextAppearance.Small.Inverse"
-        android:textColor="@color/black"
-        android:textCursorDrawable="@color/purple_700"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/profileElement"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
     <FrameLayout
         android:id="@+id/framelayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/searchObject"
-        app:layout_constraintTop_toBottomOf="@+id/searchObject">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 
-    <Button
-        android:id="@+id/fullProductListButton"
-        android:layout_width="wrap_content"
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:text="LIST"
+        android:background="#FFF"
+        app:itemIconTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/framelayout" />
-
-    <Button
-        android:id="@+id/profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:text="PROFILE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/framelayout" />
-
-    <ImageView
-        android:id="@+id/profileElement"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="3dp"
-        android:background="@drawable/arrow_back_background"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:srcCompat="@drawable/profile_element" />
+        app:menu="@menu/navigation_bar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

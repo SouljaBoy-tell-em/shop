@@ -22,12 +22,14 @@ public class ProductsServerParser {
         return products;
     }
 
-    public boolean parse(String xmlData) {
+    public boolean parse(String xmlData, String s) {
 
         boolean statusParse = true;
         boolean stateProduct = false;
         ProductSave currentProduct = null;
         String currentContent = "";
+
+        boolean flag = false;
 
         try {
 
@@ -57,20 +59,24 @@ public class ProductsServerParser {
                     case XmlPullParser.END_TAG:
                         if(stateProduct) {
 
-                            if("product".equalsIgnoreCase(tagName)){
+                            if("product".equalsIgnoreCase(tagName) && flag == true){
 
                                 products.add(currentProduct);
                                 stateProduct = false;
+                                flag = false;
                             }
 
-                            else if("product_name".equalsIgnoreCase(tagName)) {
+                            else if("product_name".equalsIgnoreCase(tagName) &&
+                                    s.regionMatches(true, 0,
+                                            currentContent, 0, s.length())) {
 
                                 currentProduct.setName(currentContent);
+                                flag = true;
                             }
 
                             else if("product_price".equalsIgnoreCase(tagName)) {
 
-                                currentProduct.setPrice(Double.parseDouble(currentContent));
+                                currentProduct.setPrice(Integer.parseInt(currentContent));
                             }
 
                             else if("product_image".equalsIgnoreCase(tagName)) {

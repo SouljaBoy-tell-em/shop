@@ -1,75 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
 <products>
     <product>
         <product_name>New Balance 327</product_name>
         <product_price>12000</product_price>
         <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance327.png?alt=media&amp;token=e3c808f7-89f1-4ff5-9c84-2ac1e8d7bac3</product_image>
     </product>
-
     <product>
         <product_name>New Balance 520</product_name>
         <product_price>10000</product_price>
         <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance520.png?alt=media&amp;token=caa5e410-93ac-4f41-82d5-171044fd1538</product_image>
     </product>
-
     <product>
         <product_name>New Balance 550</product_name>
         <product_price>21000</product_price>
         <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance550.png?alt=media&amp;token=6e4202fc-e70f-4205-93ef-83716e795892</product_image>
     </product>
-
     <product>
         <product_name>RainBow Gamepad</product_name>
         <product_price>7800</product_price>
         <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fgamepad_colourful.png?alt=media&amp;token=e99dcbe1-7f95-492f-8c3f-2c4dbd841d33</product_image>
     </product>
-
     <product>
         <product_name>Xbox Series X</product_name>
         <product_price>40000</product_price>
         <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fxbox_series_x.png?alt=media&amp;token=69a30bd8-3f13-4da0-8a55-48aadc898be8</product_image>
     </product>
-
     <product>
         <product_name>Xbox Series S</product_name>
         <product_price>25000</product_price>
         <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fxbox_series_s.png?alt=media&amp;token=2d210895-d835-4cea-9547-6367c02a1373</product_image>
     </product>
-
-    <product>
-        <product_name>New Balance 327</product_name>
-        <product_price>12000</product_price>
-        <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance327.png?alt=media&amp;token=e3c808f7-89f1-4ff5-9c84-2ac1e8d7bac3</product_image>
-    </product>
-
-    <product>
-        <product_name>New Balance 520</product_name>
-        <product_price>10000</product_price>
-        <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance520.png?alt=media&amp;token=caa5e410-93ac-4f41-82d5-171044fd1538</product_image>
-    </product>
-
-    <product>
-        <product_name>New Balance 550</product_name>
-        <product_price>21000</product_price>
-        <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance550.png?alt=media&amp;token=6e4202fc-e70f-4205-93ef-83716e795892</product_image>
-    </product>
-
-    <product>
-        <product_name>RainBow Gamepad</product_name>
-        <product_price>7800</product_price>
-        <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fgamepad_colourful.png?alt=media&amp;token=e99dcbe1-7f95-492f-8c3f-2c4dbd841d33</product_image>
-    </product>
-
-    <product>
-        <product_name>Xbox Series X</product_name>
-        <product_price>40000</product_price>
-        <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fxbox_series_x.png?alt=media&amp;token=69a30bd8-3f13-4da0-8a55-48aadc898be8</product_image>
-    </product>
-
-    <product>
-        <product_name>Xbox Series S</product_name>
-        <product_price>25000</product_price>
-        <product_image>https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fxbox_series_s.png?alt=media&amp;token=2d210895-d835-4cea-9547-6367c02a1373</product_image>
-    </product>
-
 </products>

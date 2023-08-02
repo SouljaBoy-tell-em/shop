@@ -25,19 +25,24 @@ import java.io.Serializable;
 
 public class Product {
 
-    private String          name;
-    private double         price;
+    private String name;
+    private int price;
+    private String size;
+    private String color;
     private String resourceDrawable;
     private LayoutInflater layoutInflater;
-    private int size;
-    public Product(String name, double price, String resourceDrawable, LayoutInflater layoutInflater,
-                   int size) {
+    private int sizeScreen;
+    public int imageWidth;
+    public Product(String name, int price, String size, String color, String resourceDrawable, LayoutInflater layoutInflater,
+                   int sizeScreen) {
 
         this.name             =             name;
         this.price            =            price;
+        this.size             =             size;
+        this.color            =            color;
         this.resourceDrawable = resourceDrawable;
         this.layoutInflater   =   layoutInflater;
-        this.size        =                  size;
+        this.sizeScreen       =       sizeScreen;
     }
 
     public Product() {}
@@ -51,22 +56,25 @@ public class Product {
         TextView productPrice = (TextView) product.findViewById(R.id.productPrice);
 
         Picasso.get().load(this.resourceDrawable).into(imageView);
-        imageView.getLayoutParams().width  = this.size / 2 - 50;
-        imageView.getLayoutParams().height = this.size / 2 - 50;
+        imageView.getLayoutParams().width  = this.sizeScreen / 2 - 50;
+        imageView.getLayoutParams().height = this.sizeScreen / 2 - 50;
+        this.imageWidth = imageView.getLayoutParams().width;
 
         productName.setText(this.name);
-        productName.setTextSize(20);
-
-        productPrice.setText((int)this.price + " ₽");
-        productPrice.setTextSize(16);
+        productName.setTextSize(12);
+        productPrice.setText(this.price + " ₽");
+        productPrice.setTextSize(12);
 
         return product;
     }
-
     public String getName()  { return this.name;}
-    public double getPrice() { return this.price;}
+    public int getPrice() { return this.price;}
+    public String getSize() {return this.size;}
+    public String getColor() {return this.color;}
     public String getResourceDrawable() {return this.resourceDrawable;}
     public void setName(String name) {this.name = name;}
-    public void setPrice(double price) {this.price = price;}
+    public void setPrice(int price) {this.price = price;}
+    public void setSize(String size) {this.size = size;}
+    public void setColor(String color) {this.color = color;}
     public void setResourceDrawable(String resourceDrawable) {this.resourceDrawable = resourceDrawable;}
 }

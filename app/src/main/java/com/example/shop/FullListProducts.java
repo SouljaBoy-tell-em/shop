@@ -1,6 +1,9 @@
 package com.example.shop;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -8,8 +11,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -39,66 +47,89 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class FullListProducts extends Fragment {
 
-    EditText searchProduct;
-    int size;
+    int widthWindow;
+    SearchView searchProduct;
+    List<Product> products;
+    List<View> productObjectList;
+    List<ConstraintLayout.LayoutParams> productsParams;
+    ProductList productList;
+    SQLiteDatabase dbScreenParams;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        searchProduct = (EditText) getActivity().findViewById(R.id.searchObject);
-        Button button = getActivity().findViewById(R.id.fullProductListButton);
-        size = this.getArguments().getInt("length_window");
+        dbScreenParams = getActivity().getBaseContext().
+                openOrCreateDatabase("screen_params.db", Context.MODE_PRIVATE, null);
+        Cursor query = dbScreenParams.rawQuery("SELECT * FROM screen_params;", null);
+        query.moveToNext();
+        widthWindow = query.getInt(0);
+
+        products = new ArrayList<>();
+        productObjectList = new ArrayList<>();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View constraintView = inflater.inflate(R.layout.fragment_full_list_products, container, false);
+        View constraintView = inflater.inflate(R.layout.fragment_full_list_products, container,
+                                                                            false);
         ConstraintLayout mainConstraintProductList =
-                (ConstraintLayout) constraintView.findViewById(R.id.mainConstraintList);
+                        (ConstraintLayout) constraintView.findViewById(R.id.constraintScrollView);
+        ImageView imageLogo = (ImageView) constraintView.findViewById(R.id.imageLogo);
 
-        List<Product> products = new ArrayList<>();
-        List<View> productObjectList = new ArrayList<>();
+        searchProduct = constraintView.findViewById(R.id.searchProduct);
+        searchProduct.getLayoutParams().width =widthWindow - 50;
+        searchProduct.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
 
-        try {
+                return true;
+            }
 
-            productObjectList = InitializeProductList(size, products);
-        } catch (InterruptedException e) {
+            @Override
+            public boolean onQueryTextChange(String newText) {
 
-            throw new RuntimeException(e);
-        }
+                try {
 
+                    productObjectList.clear();
+                    products.clear();
+                    productObjectList = InitializeProductList(widthWindow, products, newText);
+                } catch (InterruptedException e) {
 
-        ProductList productList = new ProductList(productObjectList, products);
-        ProductList partProductList = new ProductList();
-        List<View> saveObjects = new ArrayList<>();
+                    throw new RuntimeException(e);
+                }
 
-        String save = "" + this.getArguments().getString("search_product");
-        Log.d("SAVE", save + "");
+                productList = new ProductList(productObjectList, products);
 
-        for(int i = 0; i < productObjectList.size(); i++) {
+                productsParams = CreateInterfaceListActivity(productList, widthWindow);
+                mainConstraintProductList.removeAllViewsInLayout();
 
-            if(save.regionMatches(true, 0,
-                    products.get(i).getName(), 0, save.length()))
-                saveObjects.add(productObjectList.get(i));
-        }
+                int indexProductObject = 0;
+                for(indexProductObject = 0; indexProductObject < productObjectList.size();
+                                                                     indexProductObject++)
+                    mainConstraintProductList.addView(productList.getProductList().get(indexProductObject),
+                                                                   productsParams.get(indexProductObject));
 
+                Log.d("SIZE", productObjectList.size() + "");
 
-        partProductList.setProductList(saveObjects);
-        List<ConstraintLayout.LayoutParams> productsParams =
-                CreateInterfaceListActivity(partProductList, size);
-
-        int i = 0;
-        for(i = 0; i < saveObjects.size(); i++)
-            mainConstraintProductList.addView(partProductList.getProductList().get(i), productsParams.get(i));
+                return true;
+            }
+        });
 
         return constraintView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-    public List<View> InitializeProductList(int size, List<Product> products) throws InterruptedException {
+        dbScreenParams.close();
+    }
+
+    public List<View> InitializeProductList(int size, List<Product> products, String s)
+                                            throws InterruptedException {
 
         LayoutInflater lI = getLayoutInflater();
 
@@ -109,14 +140,13 @@ public class FullListProducts extends Fragment {
 
                 try {
 
-                    String content = download("https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/list_products.xml?alt=media&token=5816e1c0-db47-48c7-ae15-d5d89e9c21dc");
-
+                    String content = download("https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/list_products.xml?alt=media&token=ef495c8e-8b38-48c9-a16c-a7b0e464d863");
                             ProductsServerParser parser = new ProductsServerParser();
-                            if(parser.parse(content)) {
+                            if(parser.parse(content, s)) {
 
                                 for(ProductSave product : parser.getProducts())
                                   products.add(new Product(product.getName(), product.getPrice(),
-                                                       product.getResourceDrawable(), lI, size));
+                                                       "XL", "black", product.getResourceDrawable(), lI, size));
                             }
                 } catch (Exception e) {
 
@@ -155,7 +185,6 @@ public class FullListProducts extends Fragment {
         return productsList;
     }
 
-
     private String download(String urlPath) throws IOException {
 
         StringBuilder xmlResult = new StringBuilder();
@@ -188,13 +217,15 @@ public class FullListProducts extends Fragment {
         }
     }
 
-    public List<ConstraintLayout.LayoutParams> CreateInterfaceListActivity(ProductList productList, int size) {
+    public List<ConstraintLayout.LayoutParams> CreateInterfaceListActivity(ProductList productList,
+                                                                           int size) {
 
         List<ConstraintLayout.LayoutParams> productListParams = new ArrayList<>();
 
-        ImageView imageView = getActivity().findViewById(R.id.productImage);
+        int indentWidth = (size - 2 * productList.getProducts().get(0).imageWidth) / 3;
+        Log.d("WIDTH", indentWidth + "");
 
-        int indexProduct = 0;
+        int  indexProduct = 0;
         for (indexProduct = 0; indexProduct <  productList.getProductList().size(); indexProduct++) {
 
             ConstraintLayout.LayoutParams cur =
@@ -206,34 +237,27 @@ public class FullListProducts extends Fragment {
 
                 productListParams.get(indexProduct).topToTop =
                         ConstraintLayout.LayoutParams.PARENT_ID;
-                productListParams.get(indexProduct).leftToLeft =
+                productListParams.get(indexProduct).startToStart =
                         ConstraintLayout.LayoutParams.PARENT_ID;
-                productListParams.get(indexProduct).setMarginStart(33);
-            } else if (indexProduct == 1) {
+                productListParams.get(indexProduct).leftMargin = indentWidth;
+            }
+
+            else if (indexProduct == 1) {
 
                 productListParams.get(indexProduct).topToTop =
                         ConstraintLayout.LayoutParams.PARENT_ID;
-                productListParams.get(indexProduct).leftToRight =
-                        productList.getProductList().get(indexProduct - 1).getId();
-                productListParams.get(indexProduct).setMarginStart(33);
-            } else if (indexProduct % 2 == 0) {
-
-                productListParams.get(indexProduct).topToBottom =
-                        productList.getProductList().get(indexProduct - 2).getId();
-                productListParams.get(indexProduct).leftToLeft =
+                productListParams.get(indexProduct).endToEnd =
                         ConstraintLayout.LayoutParams.PARENT_ID;
-                productListParams.get(indexProduct).setMarginStart(33);
-            } else if (indexProduct % 2 != 0) {
+                productListParams.get(indexProduct).rightMargin = indentWidth;
+            } else {
 
                 productListParams.get(indexProduct).topToBottom =
                         productList.getProductList().get(indexProduct - 2).getId();
-                productListParams.get(indexProduct).leftToRight =
-                        productList.getProductList().get(indexProduct - 1).getId();
-                productListParams.get(indexProduct).setMarginStart(33);
+                productListParams.get(indexProduct).startToStart =
+                        productList.getProductList().get(indexProduct - 2).getId();
             }
         }
 
         return productListParams;
     }
-
 }

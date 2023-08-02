@@ -14,7 +14,6 @@
         <activity
             android:name=".ProductActivity"
             android:exported="false" />
-        <activity android:name=".Profile" />
         <activity
             android:name=".MainActivity"
             android:exported="true" >

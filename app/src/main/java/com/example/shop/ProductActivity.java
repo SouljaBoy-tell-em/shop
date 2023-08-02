@@ -3,6 +3,8 @@ package com.example.shop;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -61,6 +63,33 @@ public class ProductActivity extends AppCompatActivity {
         product.addView(productName, productNameParams);
         product.addView(productButton, productButtonParams);
 
+
+        productButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                addProductSQL(productSave);
+            }
+        });
+
         setContentView(product);
+    }
+
+    private void addProductSQL(ProductSave currentProduct) {
+
+        SQLiteDatabase dataBaseBasket =
+                getBaseContext().openOrCreateDatabase("basket.db", MODE_PRIVATE, null);
+        dataBaseBasket.execSQL("CREATE TABLE IF NOT EXISTS" +
+                " products (name TEXT, price INTEGER, size TEXT, color TEXT, amount INTEGER, " +
+                "                                     resourseDrawable TEXT, UNIQUE(name))");
+        dataBaseBasket.execSQL("CREATE TABLE IF NOT EXISTS sumproducts (sum INTEGER, UNIQUE(sum))");
+        dataBaseBasket.execSQL("INSERT OR IGNORE INTO products VALUES" +
+                " ('" + currentProduct.getName() + "', "   +
+                        currentProduct.getPrice() + ", '"  +
+                        currentProduct.getSize()  + "', '" +
+                        currentProduct.getColor() + "', "  +
+                        1 +                         ", '"  +
+                currentProduct.getResourceDrawable() + "')");
+        dataBaseBasket.close();
     }
 }
