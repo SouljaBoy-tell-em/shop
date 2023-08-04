@@ -45,10 +45,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         basketFragment           = new   BasketFragment();
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        heightNavigationBar = bottomNavigationView.getLayoutParams().height;
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.mainListNavigationBar);
     }
+
 
     @Override
     protected void onDestroy() {
@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Point size      =                            new Point();
         display.getSize(size);
 
+        Log.d("SIZEX", size.x + "");
+
         dataBaseBasket =
                 getBaseContext().openOrCreateDatabase("screen_params.db",
                                                       MODE_PRIVATE,
@@ -71,11 +73,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 " screen_params (width INTEGER, height INTEGER, UNIQUE(width))");
         dataBaseBasket.execSQL("INSERT OR IGNORE INTO screen_params VALUES" +
                 " (" + size.x + ", " + size.y + ")");
-
-        dataBaseBasket.execSQL("CREATE TABLE IF NOT EXISTS" +
-                " navigation_bar_params (height INTEGER, UNIQUE(height))");
-        dataBaseBasket.execSQL("INSERT OR IGNORE INTO navigation_bar_params VALUES" +
-                " (" + heightNavigationBar + ")");
+        dataBaseBasket.close();
     }
 
     private void setNewFragment(Fragment fragment) {

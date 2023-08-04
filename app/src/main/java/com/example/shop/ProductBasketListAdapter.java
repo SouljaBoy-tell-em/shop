@@ -38,7 +38,9 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
     private int size;
     final int maxAmountProducts = 10;
     SQLiteDatabase dbBasketProducts;
-    public ProductBasketListAdapter(Context context, List<ProductSave> products, int size, TextView fullSum) {
+    Button buyAllProductsButton;
+    public ProductBasketListAdapter(Context context, List<ProductSave> products, int size,
+                                    Button buyAllProductsButton) {
 
         this.context  = context;
         this.products = products;
@@ -49,6 +51,7 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
         int i = 0;
         for(i = 0; i < this.products.size(); i++)
             this.amountProducts.add(1);
+        this.buyAllProductsButton = buyAllProductsButton;
     }
 
     public ProductBasketListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -71,8 +74,12 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
             i++;
         }
 
+        buyAllProductsButton.setText("КУПИТЬ ВСЁ ЗА " + fullSumProducts() + " ₽");
+
         ProductSave basketProduct = products.get(position);
         queryBasketProducts.moveToPosition(position);
+
+        holder.constraintBasketProduct.getLayoutParams().width = size - 70;
 
         holder.basketProductName.setText(basketProduct.getName());
         holder.basketProductSize.setText("Размер: " + basketProduct.getSize());
@@ -82,6 +89,8 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
         holder.basketProductImage.getLayoutParams().width  = size / 3;
         holder.basketProductImage.getLayoutParams().height = size / 3;
         Picasso.get().load(basketProduct.getResourceDrawable()).into(holder.basketProductImage);
+
+        holder.returnTextView.setMaxWidth(400);
 
         holder.amountProductsTextView.setText(queryBasketProducts.getInt(4) + "");
         holder.productButtonPositive.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +104,7 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
                     ContentValues cv = new ContentValues();
                     cv.put("amount", amountProducts.get(position));
                     dbBasketProducts.update("products", cv, "name=?", new String[]{basketProduct.getName()});
+                    buyAllProductsButton.setText("КУПИТЬ ВСЁ ЗА " + fullSumProducts() + " ₽");
                 }
             }
         });
@@ -110,6 +120,7 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
                     ContentValues cv = new ContentValues();
                     cv.put("amount", amountProducts.get(position));
                     dbBasketProducts.update("products", cv, "name=?", new String[]{basketProduct.getName()});
+                    buyAllProductsButton.setText("КУПИТЬ ВСЁ ЗА " + fullSumProducts() + " ₽");
                 }
             }
         });
@@ -128,10 +139,12 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
                        basketProductSize,
                        basketProductColor,
                        basketOldProductPrice,
-                       amountProductsTextView;
+                       amountProductsTextView,
+                       returnTextView;
         final ImageView basketProductImage;
         final ImageButton productButtonNegative,
                           productButtonPositive;
+        final ConstraintLayout constraintBasketProduct;
 
         ViewHolder(View view) {
 
@@ -146,6 +159,18 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
             basketProductImage       = view.findViewById(R.id.basketProductImage);
             productButtonNegative    = view.findViewById(R.id.productButtonNegative);
             productButtonPositive    = view.findViewById(R.id.productButtonPositive);
+            constraintBasketProduct  = view.findViewById(R.id.constraintBasketProduct);
+            returnTextView           = view.findViewById(R.id.returnTextView);
         }
+    }
+    private int fullSumProducts() {
+
+        int fullSum = 0;
+
+        int indexProduct = 0;
+        for(indexProduct = 0; indexProduct < products.size(); indexProduct++)
+            fullSum += products.get(indexProduct).getPrice() * amountProducts.get(indexProduct);
+
+        return fullSum;
     }
 }

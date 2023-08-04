@@ -1,106 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintBasketProduct"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
 
-
-    <ImageView
-        android:id="@+id/basketProductImage"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintBasketProduct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
+        android:background="@drawable/item_basket_recycler_view_background_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        <ImageView
+            android:id="@+id/basketProductImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
 
-    <TextView
-        android:id="@+id/basketProductName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:textSize="16dp"
-        android:text="Basket product name"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/basketProductImage"
-        app:layout_constraintTop_toTopOf="@+id/basketProductImage" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/basketProductPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Basket product price"
-        android:textColor="@color/red"
-        android:textSize="16dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/basketProductImage"
-        app:layout_constraintStart_toStartOf="@+id/basketProductColor" />
+        <TextView
+            android:id="@+id/basketProductName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Basket product name"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/basketProductImage"
+            app:layout_constraintTop_toTopOf="@+id/basketProductImage" />
 
-    <TextView
-        android:id="@+id/basketProductSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:text="Basket product size"
-        android:textSize="14dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/basketProductName"
-        app:layout_constraintTop_toBottomOf="@+id/basketProductName" />
+        <TextView
+            android:id="@+id/basketProductSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="Basket product size"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/basketProductName"
+            app:layout_constraintTop_toBottomOf="@+id/basketProductName" />
 
-    <TextView
-        android:id="@+id/basketProductColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:textSize="14dp"
-        android:text="Basket product color"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/basketProductSize"
-        app:layout_constraintTop_toBottomOf="@+id/basketProductSize" />
+        <TextView
+            android:id="@+id/basketProductColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Basket product color"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/basketProductSize"
+            app:layout_constraintTop_toBottomOf="@+id/basketProductSize" />
 
-    <ImageButton
-        android:id="@+id/productButtonPositive"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/productButtonNegative"
-        app:layout_constraintStart_toEndOf="@+id/amountProductsView"
-        app:srcCompat="@drawable/product_button_positive" />
+        <ImageButton
+            android:id="@+id/productButtonPositive"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/productButtonNegative"
+            app:layout_constraintStart_toEndOf="@+id/amountProductsView"
+            app:srcCompat="@drawable/product_button_positive" />
 
-    <ImageButton
-        android:id="@+id/productButtonNegative"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="7dp"
-        app:layout_constraintStart_toStartOf="@+id/basketProductColor"
-        app:layout_constraintTop_toBottomOf="@+id/basketProductColor"
-        app:srcCompat="@drawable/product_button_negative" />
+        <ImageButton
+            android:id="@+id/productButtonNegative"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="7dp"
+            app:layout_constraintStart_toStartOf="@+id/basketProductColor"
+            app:layout_constraintTop_toBottomOf="@+id/basketProductColor"
+            app:srcCompat="@drawable/product_button_negative" />
 
-    <TextView
-        android:id="@+id/amountProductsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textSize="16dp"
-        android:text="1"
-        app:layout_constraintBottom_toBottomOf="@+id/productButtonNegative"
-        app:layout_constraintStart_toEndOf="@+id/productButtonNegative" />
+        <TextView
+            android:id="@+id/amountProductsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="1"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/productButtonNegative"
+            app:layout_constraintStart_toEndOf="@+id/productButtonNegative" />
 
-    <TextView
-        android:id="@+id/basketOldProductPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:text="TextView"
-        android:textSize="16dp"
-        app:layout_constraintStart_toEndOf="@+id/basketProductPrice"
-        app:layout_constraintTop_toTopOf="@+id/basketProductPrice" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintOrderLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_basket_recycler_view_background_constraint_price"
+            android:layout_marginBottom="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/basketProductImage"
+            app:layout_constraintBottom_toBottomOf="parent">
 
+            <TextView
+                android:id="@+id/basketProductPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="Basket product price"
+                android:textColor="@color/red"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="15dp"
+                app:layout_constraintTop_toTopOf="@id/constraintOrderLayout"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/basketOldProductPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:text="TextView"
+                android:textSize="18dp"
+                app:layout_constraintStart_toEndOf="@+id/basketProductPrice"
+                app:layout_constraintTop_toTopOf="@+id/basketProductPrice" />
+
+            <TextView
+                android:id="@+id/returnTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="150 ₽ за возврат при отказе"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="@+id/basketProductPrice"
+                app:layout_constraintTop_toBottomOf="@+id/basketProductPrice" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buyItemButton"
+                android:layout_width="wrap_content"
+                android:layout_height="25sp"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/item_order_button"
+                android:text="Купить"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@+id/basketOldProductPrice"
+                app:layout_constraintTop_toTopOf="@id/basketOldProductPrice" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
