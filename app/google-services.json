@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "219924000198",
+    "firebase_url": "https://shop-c93db-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "shop-c93db",
+    "storage_bucket": "shop-c93db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219924000198:android:716860e6606a909f2f96c7",
+        "android_client_info": {
+          "package_name": "com.example.shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219924000198-89q10v9mvlaapknunkjek74j2ubs4gio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shop",
+            "certificate_hash": "42fc3a6f89147a373982cffb776b75f5a2f44a42"
+          }
+        },
+        {
+          "client_id": "219924000198-tr16iogppa8cuthlf7aul07kvfdtkv8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKSVxsr664HJX3MvzpZWNDAPD7nVqsyM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219924000198-7p0g2jd5u5nn8atvpomt16qln810e27r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

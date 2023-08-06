@@ -21,6 +21,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -32,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     FullListProducts fullListProductsFragment;
     BasketFragment   basketFragment;
     SQLiteDatabase dataBaseBasket;
+    FirebaseDatabase fireDatabase;
+    DatabaseReference databaseReference;
+
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -39,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fireDatabase = FirebaseDatabase.getInstance();
+        databaseReference = fireDatabase.getReference("key-1");
+        databaseReference.setValue("semen semenov is gay");
 
         screenParams();
         fullListProductsFragment = new FullListProducts();
