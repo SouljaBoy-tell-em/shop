@@ -23,8 +23,8 @@ public class ProductActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        ProductSave productSave =
-                (ProductSave) getIntent().getExtras().getSerializable(ProductSave.class.getSimpleName());
+        Product productSave =
+                (Product) getIntent().getExtras().getSerializable(Product.class.getSimpleName());
 
         ConstraintLayout product = new ConstraintLayout(this);
 
@@ -75,7 +75,7 @@ public class ProductActivity extends AppCompatActivity {
         setContentView(product);
     }
 
-    private void addProductSQL(ProductSave currentProduct) {
+    private void addProductSQL(Product currentProduct) {
 
         SQLiteDatabase dataBaseBasket =
                 getBaseContext().openOrCreateDatabase("basket.db", MODE_PRIVATE, null);

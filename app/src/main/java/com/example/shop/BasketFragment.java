@@ -81,7 +81,7 @@ public class BasketFragment extends Fragment {
         queryHeightNavigationBar.moveToNext();
         bottomNavigationHeight = queryHeightNavigationBar.getInt(0);
 
-        ArrayList<ProductSave> basketProducts = new ArrayList<>();
+        ArrayList<Product> basketProducts = new ArrayList<>();
         RecyclerView basketProductsRecyclerView = view.findViewById(R.id.productsBasketListView);
         basketProductsRecyclerView.getLayoutParams().height = windowHeight -
                                                     bottomNavigationHeight -
@@ -97,7 +97,7 @@ public class BasketFragment extends Fragment {
         basketProductsRecyclerView.addItemDecoration(indentBasketProductsRecyclerView);
 
         while(queryBasketProducts.moveToNext())
-            basketProducts.add(new ProductSave(queryBasketProducts.getString(0),
+            basketProducts.add(new Product(queryBasketProducts.getString(0),
                     queryBasketProducts.getInt(1),
                     queryBasketProducts.getString(2),
                     queryBasketProducts.getString(3),

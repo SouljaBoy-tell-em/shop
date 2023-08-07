@@ -1,6 +1,7 @@
 package com.example.shop;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -20,22 +21,26 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    int widthWindow;
-    int heightNavigationBar;
-    BottomNavigationView bottomNavigationView;
-    FullListProducts fullListProductsFragment;
-    BasketFragment   basketFragment;
-    SQLiteDatabase dataBaseBasket;
-    FirebaseDatabase fireDatabase;
-    DatabaseReference databaseReference;
+    private BottomNavigationView bottomNavigationView;
+    private FullListProducts fullListProductsFragment;
+    private BasketFragment   basketFragment;
+    private SQLiteDatabase dataBaseBasket;
+
+    Product product;
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -44,10 +49,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        fireDatabase = FirebaseDatabase.getInstance();
-        databaseReference = fireDatabase.getReference("key-1");
-        databaseReference.setValue("semen semenov is gay");
 
         screenParams();
         fullListProductsFragment = new FullListProducts();
@@ -83,13 +84,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         dataBaseBasket.execSQL("INSERT OR IGNORE INTO screen_params VALUES" +
                 " (" + size.x + ", " + size.y + ")");
         dataBaseBasket.close();
-    }
-
-    private void setNewFragment(Fragment fragment) {
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framelayout, fragment);
-        ft.commit();
     }
 
     @Override
