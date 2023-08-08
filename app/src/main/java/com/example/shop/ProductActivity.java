@@ -23,13 +23,13 @@ public class ProductActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        ProductSave productSave =
-                (ProductSave) getIntent().getExtras().getSerializable(ProductSave.class.getSimpleName());
+        Product productSave =
+                (Product) getIntent().getExtras().getSerializable(Product.class.getSimpleName());
 
         ConstraintLayout product = new ConstraintLayout(this);
 
         ImageView productImage = new ImageView(this);
-        int imageSize = getIntent().getExtras().getInt("full_screen_size") - 30;
+        int imageSize = MainActivity.getWidthWindow() - 30;
         productImage.setId(View.generateViewId());
         ConstraintLayout.LayoutParams productImageParams =
                 new ConstraintLayout.LayoutParams(imageSize, imageSize);
@@ -75,7 +75,7 @@ public class ProductActivity extends AppCompatActivity {
         setContentView(product);
     }
 
-    private void addProductSQL(ProductSave currentProduct) {
+    private void addProductSQL(Product currentProduct) {
 
         SQLiteDatabase dataBaseBasket =
                 getBaseContext().openOrCreateDatabase("basket.db", MODE_PRIVATE, null);

@@ -33,13 +33,13 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
 
     private Context context;
     private final LayoutInflater inflater;
-    private final List<ProductSave> products;
+    private final List<Product> products;
     private ArrayList<Integer> amountProducts;
     private int size;
     final int maxAmountProducts = 10;
     SQLiteDatabase dbBasketProducts;
     Button buyAllProductsButton;
-    public ProductBasketListAdapter(Context context, List<ProductSave> products, int size,
+    public ProductBasketListAdapter(Context context, List<Product> products, int size,
                                     Button buyAllProductsButton) {
 
         this.context  = context;
@@ -76,7 +76,7 @@ public class ProductBasketListAdapter extends RecyclerView.Adapter<ProductBasket
 
         buyAllProductsButton.setText("КУПИТЬ ВСЁ ЗА " + fullSumProducts() + " ₽");
 
-        ProductSave basketProduct = products.get(position);
+        Product basketProduct = products.get(position);
         queryBasketProducts.moveToPosition(position);
 
         holder.constraintBasketProduct.getLayoutParams().width = size - 70;

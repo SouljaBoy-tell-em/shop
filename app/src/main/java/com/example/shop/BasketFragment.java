@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,7 @@ public class BasketFragment extends Fragment {
     SQLiteDatabase dbScreenParams;
     int sumProductsPrices;
     Button buyAllProductsButton;
+    FirebaseAuth auth;
 
 
     @Override
@@ -54,7 +56,6 @@ public class BasketFragment extends Fragment {
                 " navigation_bar_params (height INTEGER, UNIQUE(height))");
         dbScreenParams.execSQL("INSERT OR IGNORE INTO navigation_bar_params VALUES" +
                 " (" + bnv.getHeight() + ")");
-
         sumProductsPrices = 0;
     }
 
@@ -81,7 +82,7 @@ public class BasketFragment extends Fragment {
         queryHeightNavigationBar.moveToNext();
         bottomNavigationHeight = queryHeightNavigationBar.getInt(0);
 
-        ArrayList<ProductSave> basketProducts = new ArrayList<>();
+        ArrayList<Product> basketProducts = new ArrayList<>();
         RecyclerView basketProductsRecyclerView = view.findViewById(R.id.productsBasketListView);
         basketProductsRecyclerView.getLayoutParams().height = windowHeight -
                                                     bottomNavigationHeight -
@@ -90,6 +91,7 @@ public class BasketFragment extends Fragment {
                 new RecyclerView.ItemDecoration() {
                     @Override
                     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+
                         super.getItemOffsets(outRect, view, parent, state);
                         outRect.bottom = 50;
                     }
@@ -97,7 +99,7 @@ public class BasketFragment extends Fragment {
         basketProductsRecyclerView.addItemDecoration(indentBasketProductsRecyclerView);
 
         while(queryBasketProducts.moveToNext())
-            basketProducts.add(new ProductSave(queryBasketProducts.getString(0),
+            basketProducts.add(new Product(queryBasketProducts.getString(0),
                     queryBasketProducts.getInt(1),
                     queryBasketProducts.getString(2),
                     queryBasketProducts.getString(3),
@@ -107,6 +109,13 @@ public class BasketFragment extends Fragment {
                 new ProductBasketListAdapter(getActivity(), basketProducts, windowWidth,
                                                                   buyAllProductsButton);
         basketProductsRecyclerView.setAdapter(productBasketListAdapter);
+
+
+        if(FirebaseAuth.getInstance().getCurrentUser() != null)
+            Log.d("F USER", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        else
+            Log.d("F USER", "FAIL");
 
         return view;
     }
