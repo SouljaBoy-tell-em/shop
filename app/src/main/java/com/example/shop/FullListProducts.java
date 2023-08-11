@@ -1,232 +1,188 @@
 package com.example.shop;
 
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
+import android.text.Html;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import org.xmlpull.v1.XmlPullParser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import javax.net.ssl.HttpsURLConnection;
 
 
 public class FullListProducts extends Fragment {
 
-    int widthWindow;
-    SearchView searchProduct;
-    List<Product> products;
-    List<View> productObjectList;
-    List<ConstraintLayout.LayoutParams> productsParams;
-    ProductList productList;
-    SQLiteDatabase dbScreenParams;
+    private SQLiteDatabase dbScreenParams;
+    private int widthWindow;
+    private DatabaseReference firebaseDBRef;
+    private ArrayList<Product> products;
+    private ArrayList<View> productsObj;
+    private ArrayList<ConstraintLayout.LayoutParams> productsObjParams;
+    private ConstraintLayout mainConstraintProductList;
+    private ImageView imageLogo;
+    private SearchView productSearchView;
+    private boolean isPressed;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dbScreenParams = getActivity().getBaseContext().
-                openOrCreateDatabase("screen_params.db", Context.MODE_PRIVATE, null);
-        Cursor query = dbScreenParams.rawQuery("SELECT * FROM screen_params;", null);
-        query.moveToNext();
-        widthWindow = query.getInt(0);
-
+        isPressed = false;
         products = new ArrayList<>();
-        productObjectList = new ArrayList<>();
+        productsObj = new ArrayList<>();
+        firebaseDBRef = FirebaseDatabase.getInstance().getReference("ProductList");
+        widthWindow = MainActivity.getWidthWindow();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View constraintView = inflater.inflate(R.layout.fragment_full_list_products, container,
-                                                                            false);
-        ConstraintLayout mainConstraintProductList =
-                        (ConstraintLayout) constraintView.findViewById(R.id.constraintScrollView);
-        ImageView imageLogo = (ImageView) constraintView.findViewById(R.id.imageLogo);
+        View view = inflater.inflate(R.layout.fragment_full_list_products, container, false);
+        mainConstraintProductList = view.findViewById(R.id.constraintScrollView);
+        imageLogo = view.findViewById(R.id.imageLogo);
+        productSearchView = view.findViewById(R.id.searchProduct);
+        productSearchView.getLayoutParams().width = widthWindow - 50;
 
-        searchProduct = constraintView.findViewById(R.id.searchProduct);
-        searchProduct.getLayoutParams().width =widthWindow - 50;
-        searchProduct.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        productSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                try {
-
-                    productObjectList.clear();
-                    products.clear();
-                    productObjectList = InitializeProductList(widthWindow, products, newText);
-                } catch (InterruptedException e) {
-
-                    throw new RuntimeException(e);
-                }
-
-                productList = new ProductList(productObjectList, products);
-
-                productsParams = CreateInterfaceListActivity(productList, widthWindow);
-                mainConstraintProductList.removeAllViewsInLayout();
-
-                int indexProductObject = 0;
-                for(indexProductObject = 0; indexProductObject < productObjectList.size();
-                                                                     indexProductObject++)
-                    mainConstraintProductList.addView(productList.getProductList().get(indexProductObject),
-                                                                   productsParams.get(indexProductObject));
-
-                Log.d("SIZE", productObjectList.size() + "");
-
                 return true;
             }
         });
 
-        return constraintView;
-    }
+        ValueEventListener vel = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+                for(DataSnapshot curDataSnapshot : snapshot.getChildren()) {
 
-        dbScreenParams.close();
-    }
+                    Product product = curDataSnapshot.getValue(Product.class);
+                    products.add(product);
+                    productsObj.add(createProductObject(product));
+                }
 
-    public List<View> InitializeProductList(int size, List<Product> products, String s)
-                                            throws InterruptedException {
+                productsObjParams = createProductObjParams();
 
-        LayoutInflater lI = getLayoutInflater();
-
-        Thread threadURL = new Thread(new Runnable() {
+                int indexProduct = 0;
+                for(indexProduct = 0; indexProduct < productsObj.size(); indexProduct++)
+                    mainConstraintProductList.addView(productsObj.get(indexProduct),
+                                                      productsObjParams.get(indexProduct));
+            }
 
             @Override
-            public void run() {
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                try {
+            }
+        };
+        firebaseDBRef.addValueEventListener(vel);
 
-                    String content = download("https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/list_products.xml?alt=media&token=ef495c8e-8b38-48c9-a16c-a7b0e464d863");
-                            ProductsServerParser parser = new ProductsServerParser();
-                            if(parser.parse(content, s)) {
+        return view;
+    }
+    private View createProductObject(Product product) {
 
-                                for(ProductSave product : parser.getProducts())
-                                  products.add(new Product(product.getName(), product.getPrice(),
-                                                       "XL", "black", product.getResourceDrawable(), lI, size));
-                            }
-                } catch (Exception e) {
+        View productObj = getLayoutInflater().inflate(R.layout.layout_product, null,
+                false);
 
-                    Log.d("EXCEPTION", e.getMessage().toString());
+        productObj.setId(View.generateViewId());
+        ImageView productImage = (ImageView) productObj.findViewById(R.id.productImage);
+        ImageView addRed = (ImageView) productObj.findViewById(R.id.addRed);
+        TextView productName = (TextView)  productObj.findViewById(R.id.productName);
+        TextView productPrice = (TextView) productObj.findViewById(R.id.productPrice);
+        TextView productOldPrice = (TextView) productObj.findViewById(R.id.productOldPrice);
+        ConstraintLayout mainConstraintButtonPrice
+                = (ConstraintLayout) productObj.findViewById(R.id.mainConstraintButtonPrice);
+//        ConstraintLayout constraintButtonPrice
+//                = (ConstraintLayout) productObj.findViewById(R.id.constraintButtonPrice);
+        ConstraintLayout inBasketConstraint
+                = (ConstraintLayout) productObj.findViewById(R.id.inBasketConstraint);
+
+        Picasso.get().load(product.getResourceDrawable()).into(productImage);
+        productImage.getLayoutParams().width  = widthWindow / 2 - 50;
+        productImage.getLayoutParams().height = widthWindow / 2 - 50;
+        productName.setText(product.getName());
+        productPrice.setText(product.getPrice() + " ₽");
+        productOldPrice.setText(Html.fromHtml("<s>" + product.getOldPrice() + "</s>"));
+        inBasketConstraint.setVisibility(View.INVISIBLE);
+
+        mainConstraintButtonPrice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isPressed == false) {
+
+//                    ObjectAnimator colorFade = ObjectAnimator.ofObject(constraintButtonPrice, "backgroundColor" /*view attribute name*/, new ArgbEvaluator(), getContext().getResources().getColor(R.color.grey) /*from color*/, getContext().getResources().getColor(R.color.black) /*to color*/);
+//                    colorFade.setDuration(250);
+//                    colorFade.start();
+                    isPressed = true;
+
+                    Animation buttonIncrease = AnimationUtils.loadAnimation(getContext(), R.anim.constraint_button_price_item_anim);
+                    mainConstraintButtonPrice.startAnimation(buttonIncrease);
+
+                    inBasketConstraint.setVisibility(View.VISIBLE);
+                    productPrice.setVisibility(View.INVISIBLE);
+                    productOldPrice.setVisibility(View.INVISIBLE);
+                    addRed.setVisibility(View.INVISIBLE);
+                    mainConstraintButtonPrice.setBackgroundResource(R.drawable.price_item_product_list_constraint_layout_pressed);
+
+                    return;
+                }
+
+                if (isPressed == true) {
+
+                    isPressed = false;
+
+                    Animation buttonIncrease = AnimationUtils.loadAnimation(getContext(), R.anim.constraint_button_price_item_anim);
+                    mainConstraintButtonPrice.startAnimation(buttonIncrease);
+
+                    inBasketConstraint.setVisibility(View.INVISIBLE);
+                    productPrice.setVisibility(View.VISIBLE);
+                    productOldPrice.setVisibility(View.VISIBLE);
+                    addRed.setVisibility(View.VISIBLE);
+                    mainConstraintButtonPrice.setBackgroundResource(R.drawable.price_item_product_list_constraint_layout);
                 }
             }
         });
 
-        threadURL.start();
-        threadURL.join();
-
-        List<View> productsList = new ArrayList<>();
-
-        int indexProduct = 0;
-        for(indexProduct = 0; indexProduct < products.size(); indexProduct++)
-            productsList.add(products.get(indexProduct).CreateProduct());
-
-        for(indexProduct = 0; indexProduct < products.size(); indexProduct++) {
-
-            final int indexProductSave = indexProduct;
-            productsList.get(indexProduct).setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-
-                    Intent intentActivityProduct = new Intent(getActivity(), ProductActivity.class);
-                    ProductSave productSave = new ProductSave(products.get(indexProductSave));
-                    intentActivityProduct.putExtra(ProductSave.class.getSimpleName(), productSave);
-                    intentActivityProduct.putExtra("full_screen_size", size);
-
-                    startActivity(intentActivityProduct);
-                }
-            });
-        }
-
-        return productsList;
+        return productObj;
     }
 
-    private String download(String urlPath) throws IOException {
+    public ArrayList<ConstraintLayout.LayoutParams> createProductObjParams() {
 
-        StringBuilder xmlResult = new StringBuilder();
-        BufferedReader reader = null;
-        InputStream stream = null;
-        HttpsURLConnection connection = null;
+        ArrayList<ConstraintLayout.LayoutParams> productListParams = new ArrayList<>();
 
-        try {
-
-            URL url = new URL(urlPath);
-            connection = (HttpsURLConnection) url.openConnection();
-            stream = connection.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(stream));
-            String line;
-
-            while ((line=reader.readLine()) != null)
-                xmlResult.append(line);
-
-            return xmlResult.toString();
-        } finally {
-
-            if (reader != null)
-                reader.close();
-
-            if (stream != null)
-                stream.close();
-
-            if (connection != null)
-                connection.disconnect();
-        }
-    }
-
-    public List<ConstraintLayout.LayoutParams> CreateInterfaceListActivity(ProductList productList,
-                                                                           int size) {
-
-        List<ConstraintLayout.LayoutParams> productListParams = new ArrayList<>();
-
-        int indentWidth = (size - 2 * productList.getProducts().get(0).imageWidth) / 3;
+        int indentWidth = 100 / 3;
         Log.d("WIDTH", indentWidth + "");
 
         int  indexProduct = 0;
-        for (indexProduct = 0; indexProduct <  productList.getProductList().size(); indexProduct++) {
+        for (indexProduct = 0; indexProduct <  productsObj.size(); indexProduct++) {
 
             ConstraintLayout.LayoutParams cur =
                     new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -252,9 +208,9 @@ public class FullListProducts extends Fragment {
             } else {
 
                 productListParams.get(indexProduct).topToBottom =
-                        productList.getProductList().get(indexProduct - 2).getId();
+                        productsObj.get(indexProduct - 2).getId();
                 productListParams.get(indexProduct).startToStart =
-                        productList.getProductList().get(indexProduct - 2).getId();
+                        productsObj.get(indexProduct - 2).getId();
             }
         }
 
