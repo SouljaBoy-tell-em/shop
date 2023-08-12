@@ -26,20 +26,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BasketFragment extends Fragment {
 
-    BottomNavigationView bnv;
-    int windowWidth;
-    int windowHeight;
-    int bottomNavigationHeight;
-    SQLiteDatabase dbBasketProducts;
-    SQLiteDatabase dbScreenParams;
-    int sumProductsPrices;
-    Button buyAllProductsButton;
-
+    private BottomNavigationView bnv;
+    private SQLiteDatabase dbBasketProducts;
+    private int sumProductsPrices;
+    private Button buyAllProductsButton;
+    private DatabaseReference firebaseDBRef;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,13 +50,6 @@ public class BasketFragment extends Fragment {
         bnv = getActivity().findViewById(R.id.bottomNavigationView);
         dbBasketProducts = getActivity().getBaseContext().
                 openOrCreateDatabase("basket.db", Context.MODE_PRIVATE, null);
-        dbScreenParams = getActivity().getBaseContext().
-                openOrCreateDatabase("screen_params.db", Context.MODE_PRIVATE, null);
-        dbScreenParams.execSQL("CREATE TABLE IF NOT EXISTS" +
-                " navigation_bar_params (height INTEGER, UNIQUE(height))");
-        dbScreenParams.execSQL("INSERT OR IGNORE INTO navigation_bar_params VALUES" +
-                " (" + bnv.getHeight() + ")");
-
         sumProductsPrices = 0;
     }
 
@@ -65,46 +60,41 @@ public class BasketFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_basket, container, false);
         ConstraintLayout mainConstraint = view.findViewById(R.id.mainConstraint);
         buyAllProductsButton = view.findViewById(R.id.buyAllProductsButton);
-        buyAllProductsButton.setText("КУПИТЬ ВСЁ за 15000 ₽");
 
         Cursor queryBasketProducts = dbBasketProducts.rawQuery("SELECT * FROM products;",
                                                    null);
-        Cursor queryScreenParams = dbScreenParams.rawQuery("SELECT * FROM screen_params;",
-                                               null);
-        Cursor queryHeightNavigationBar = dbScreenParams.rawQuery("SELECT * FROM navigation_bar_params;",
-                null);
 
-        queryScreenParams.moveToNext();
-        windowWidth            = queryScreenParams.getInt(0);
-        windowHeight           = queryScreenParams.getInt(1);
-
-        queryHeightNavigationBar.moveToNext();
-        bottomNavigationHeight = queryHeightNavigationBar.getInt(0);
-
-        ArrayList<ProductSave> basketProducts = new ArrayList<>();
+        ArrayList<Product> basketProducts = new ArrayList<>();
         RecyclerView basketProductsRecyclerView = view.findViewById(R.id.productsBasketListView);
-        basketProductsRecyclerView.getLayoutParams().height = windowHeight -
-                                                    bottomNavigationHeight -
-                             buyAllProductsButton.getLayoutParams().height * 3;
+        basketProductsRecyclerView.getLayoutParams().height =
+                        MainActivity.getHeightWindow() -
+                        MainActivity.getHeightBNV() -
+                        buyAllProductsButton.getLayoutParams().height * 3;
+
         RecyclerView.ItemDecoration indentBasketProductsRecyclerView =
                 new RecyclerView.ItemDecoration() {
                     @Override
                     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+
                         super.getItemOffsets(outRect, view, parent, state);
                         outRect.bottom = 50;
                     }
                 };
         basketProductsRecyclerView.addItemDecoration(indentBasketProductsRecyclerView);
 
-        while(queryBasketProducts.moveToNext())
-            basketProducts.add(new ProductSave(queryBasketProducts.getString(0),
-                    queryBasketProducts.getInt(1),
+        int indexProduct = 1;
+        while(queryBasketProducts.moveToNext()) {
+
+            basketProducts.add(new Product(queryBasketProducts.getString(0),
+                    queryBasketProducts.getInt(1), 5000,
                     queryBasketProducts.getString(2),
                     queryBasketProducts.getString(3),
-                    queryBasketProducts.getString(5)));
+                    queryBasketProducts.getString(5), "product-" + indexProduct));
+            indexProduct++;
+        }
 
         ProductBasketListAdapter productBasketListAdapter =
-                new ProductBasketListAdapter(getActivity(), basketProducts, windowWidth,
+                new ProductBasketListAdapter(getActivity(), basketProducts, MainActivity.getWidthWindow(),
                                                                   buyAllProductsButton);
         basketProductsRecyclerView.setAdapter(productBasketListAdapter);
 
@@ -116,6 +106,5 @@ public class BasketFragment extends Fragment {
         super.onDestroy();
 
         dbBasketProducts.close();
-        dbScreenParams.close();
     }
 }

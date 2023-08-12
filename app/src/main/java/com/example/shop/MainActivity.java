@@ -3,39 +3,25 @@ package com.example.shop;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ListView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
-
-    int widthWindow;
-    int heightNavigationBar;
-    BottomNavigationView bottomNavigationView;
-    FullListProducts fullListProductsFragment;
-    BasketFragment   basketFragment;
-    SQLiteDatabase dataBaseBasket;
-    FirebaseDatabase fireDatabase;
-    DatabaseReference databaseReference;
+    private static BottomNavigationView bottomNavigationView;
+    private MainFragment fullListProductsFragment;
+    private ProfileFragment profileFragment;
+    private BasketFragment   basketFragment;
+    private SQLiteDatabase dataBaseBasket;
+    private static int widthWindow;
+    private static int heightWindow;
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -45,13 +31,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fireDatabase = FirebaseDatabase.getInstance();
-        databaseReference = fireDatabase.getReference("key-1");
-        databaseReference.setValue("semen semenov is gay");
+        //FirebaseDatabase.getInstance().getReference("ProductList").child("Product-7").setValue((new Product("Rainbow Gamepad", 19000, 22000, "44", "orange", "https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance327.png?alt=media&token=41951168-af92-4cb5-8911-95921b724abe", "Product-1")));
 
         screenParams();
-        fullListProductsFragment = new FullListProducts();
+        fullListProductsFragment = new MainFragment();
         basketFragment           = new   BasketFragment();
+        profileFragment          = new  ProfileFragment();
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -71,25 +56,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Display display = getWindowManager().getDefaultDisplay();
         Point size      =                            new Point();
         display.getSize(size);
-
-        Log.d("SIZEX", size.x + "");
-
-        dataBaseBasket =
-                getBaseContext().openOrCreateDatabase("screen_params.db",
-                                                      MODE_PRIVATE,
-                                               null);
-        dataBaseBasket.execSQL("CREATE TABLE IF NOT EXISTS" +
-                " screen_params (width INTEGER, height INTEGER, UNIQUE(width))");
-        dataBaseBasket.execSQL("INSERT OR IGNORE INTO screen_params VALUES" +
-                " (" + size.x + ", " + size.y + ")");
-        dataBaseBasket.close();
-    }
-
-    private void setNewFragment(Fragment fragment) {
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framelayout, fragment);
-        ft.commit();
+        widthWindow     = size.x;
+        heightWindow    = size.y;
     }
 
     @Override
@@ -118,14 +86,29 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         .commit();
                 return true;
 
-//            case R.id.profileNavigationBar:
-//                getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.framelayout, fullListProductsFragment)
-//                        .commit();
-//                return true;
+            case R.id.profileNavigationBar:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.framelayout, profileFragment)
+                        .commit();
+                return true;
         }
 
         return false;
+    }
+
+    public static int getWidthWindow() {
+
+        return widthWindow;
+    }
+
+    public static int getHeightWindow() {
+
+        return heightWindow;
+    }
+
+    public static int getHeightBNV() {
+
+        return bottomNavigationView.getHeight();
     }
 }
