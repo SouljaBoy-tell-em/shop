@@ -30,11 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
             android:text="Basket product name"
             android:textSize="16dp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/basketProductImage"
             app:layout_constraintTop_toTopOf="@+id/basketProductImage" />
+
+
 
         <TextView
             android:id="@+id/basketProductSize"
@@ -143,6 +146,16 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/deleteBasketProductButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/basketProductName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/basketProductName"
+            app:srcCompat="@drawable/delete_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

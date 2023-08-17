@@ -1,5 +1,7 @@
 package com.example.shop;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,35 +28,32 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class BasketFragment extends Fragment {
 
-    BottomNavigationView bnv;
-    int windowWidth;
-    int windowHeight;
-    int bottomNavigationHeight;
-    SQLiteDatabase dbBasketProducts;
-    SQLiteDatabase dbScreenParams;
-    int sumProductsPrices;
-    Button buyAllProductsButton;
-
+    private BottomNavigationView bnv;
+    private int sumProductsPrices;
+    private Button buyAllProductsButton;
+    private DatabaseReference firebaseDBRef;
+    private SQLiteDatabase databaseSQL;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         bnv = getActivity().findViewById(R.id.bottomNavigationView);
-        dbBasketProducts = getActivity().getBaseContext().
-                openOrCreateDatabase("basket.db", Context.MODE_PRIVATE, null);
-        dbScreenParams = getActivity().getBaseContext().
-                openOrCreateDatabase("screen_params.db", Context.MODE_PRIVATE, null);
-        dbScreenParams.execSQL("CREATE TABLE IF NOT EXISTS" +
-                " navigation_bar_params (height INTEGER, UNIQUE(height))");
-        dbScreenParams.execSQL("INSERT OR IGNORE INTO navigation_bar_params VALUES" +
-                " (" + bnv.getHeight() + ")");
-
         sumProductsPrices = 0;
     }
 
@@ -65,57 +64,57 @@ public class BasketFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_basket, container, false);
         ConstraintLayout mainConstraint = view.findViewById(R.id.mainConstraint);
         buyAllProductsButton = view.findViewById(R.id.buyAllProductsButton);
-        buyAllProductsButton.setText("КУПИТЬ ВСЁ за 15000 ₽");
-
-        Cursor queryBasketProducts = dbBasketProducts.rawQuery("SELECT * FROM products;",
-                                                   null);
-        Cursor queryScreenParams = dbScreenParams.rawQuery("SELECT * FROM screen_params;",
-                                               null);
-        Cursor queryHeightNavigationBar = dbScreenParams.rawQuery("SELECT * FROM navigation_bar_params;",
-                null);
-
-        queryScreenParams.moveToNext();
-        windowWidth            = queryScreenParams.getInt(0);
-        windowHeight           = queryScreenParams.getInt(1);
-
-        queryHeightNavigationBar.moveToNext();
-        bottomNavigationHeight = queryHeightNavigationBar.getInt(0);
-
-        ArrayList<ProductSave> basketProducts = new ArrayList<>();
+        ArrayList<Product> basketProducts = new ArrayList<>();
         RecyclerView basketProductsRecyclerView = view.findViewById(R.id.productsBasketListView);
-        basketProductsRecyclerView.getLayoutParams().height = windowHeight -
-                                                    bottomNavigationHeight -
-                             buyAllProductsButton.getLayoutParams().height * 3;
+        basketProductsRecyclerView.getLayoutParams().height =
+                MainActivity.getHeightWindow() -
+                        MainActivity.getHeightBNV() -
+                        buyAllProductsButton.getLayoutParams().height * 3;
+
         RecyclerView.ItemDecoration indentBasketProductsRecyclerView =
                 new RecyclerView.ItemDecoration() {
                     @Override
                     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+
                         super.getItemOffsets(outRect, view, parent, state);
                         outRect.bottom = 50;
                     }
                 };
         basketProductsRecyclerView.addItemDecoration(indentBasketProductsRecyclerView);
+            firebaseDBRef = FirebaseDatabase
+                    .getInstance()
+                    .getReference("Users")
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child("Basket");
 
-        while(queryBasketProducts.moveToNext())
-            basketProducts.add(new ProductSave(queryBasketProducts.getString(0),
-                    queryBasketProducts.getInt(1),
-                    queryBasketProducts.getString(2),
-                    queryBasketProducts.getString(3),
-                    queryBasketProducts.getString(5)));
+            ValueEventListener vel = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-        ProductBasketListAdapter productBasketListAdapter =
-                new ProductBasketListAdapter(getActivity(), basketProducts, windowWidth,
-                                                                  buyAllProductsButton);
-        basketProductsRecyclerView.setAdapter(productBasketListAdapter);
+                    basketProducts.clear();
+                    for (DataSnapshot curDataSnapshot : snapshot.getChildren()) {
 
-        return view;
-    }
+                        Product product = curDataSnapshot.getValue(Product.class);
+                        basketProducts.add(product);
+                    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+                    try {
 
-        dbBasketProducts.close();
-        dbScreenParams.close();
-    }
+                        ProductBasketListAdapter productBasketListAdapter =
+                                new ProductBasketListAdapter(getActivity(), basketProducts, MainActivity.getWidthWindow());
+                        basketProductsRecyclerView.setAdapter(productBasketListAdapter);
+                    } catch (Exception e) {
+
+                        Log.d("EXCEPTION", e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            };
+            firebaseDBRef.addValueEventListener(vel);
+
+            return view;
+        }
+
 }
