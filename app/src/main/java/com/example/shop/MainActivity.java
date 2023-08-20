@@ -15,13 +15,15 @@ import android.view.Display;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private static BottomNavigationView bottomNavigationView;
     private MainFragment fullListProductsFragment;
     private ProfileFragment profileFragment;
-    private BasketFragment   basketFragment;
+    private BasketFragment basketFragment;
+    private CategoryFragment categoryFragment;
     private SQLiteDatabase dataBaseBasket;
     private static int widthWindow;
     private static int heightWindow;
@@ -33,17 +35,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        FirebaseDatabase.getInstance().getReference("ProductList").child("Product-5").setValue((new Product("New Balance 550", 19000, 22000, "44", "orange", "https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/products_image%2Fnewbalance327.png?alt=media&token=41951168-af92-4cb5-8911-95921b724abe", "Product-1", 1)));
+        //FirebaseDatabase.getInstance().getReference("Category").child("Category-2").setValue((new CategoryItem("https://firebasestorage.googleapis.com/v0/b/shop-c93db.appspot.com/o/category%2Fcategory.JPG?alt=media&token=92b0041c-3ee0-4c7d-b47d-3526eb617bb2", "Обувь 2")));
 
         screenParams();
-        fullListProductsFragment = new MainFragment();
+        fullListProductsFragment = new     MainFragment();
+        categoryFragment         = new CategoryFragment();
         basketFragment           = new   BasketFragment();
         profileFragment          = new  ProfileFragment();
-
-
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.mainListNavigationBar);
+        bottomNavigationView.setSelectedItemId(R.id.profileNavigationBar);
     }
 
 
@@ -75,12 +76,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         .commit();
                 return true;
 
-//            case R.id.discountNavigationBar:
-//                getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.framelayout, fullListProductsFragment)
-//                        .commit();
-//                return true;
+            case R.id.categoryNavigationBar:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.framelayout, categoryFragment)
+                        .commit();
+                return true;
 
             case R.id.basketNavigationBar:
                 getSupportFragmentManager()

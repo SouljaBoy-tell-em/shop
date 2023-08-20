@@ -62,14 +62,9 @@ public class BasketFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_basket, container, false);
-        ConstraintLayout mainConstraint = view.findViewById(R.id.mainConstraint);
         buyAllProductsButton = view.findViewById(R.id.buyAllProductsButton);
-        ArrayList<Product> basketProducts = new ArrayList<>();
-        RecyclerView basketProductsRecyclerView = view.findViewById(R.id.productsBasketListView);
-        basketProductsRecyclerView.getLayoutParams().height =
-                MainActivity.getHeightWindow() -
-                        MainActivity.getHeightBNV() -
-                        buyAllProductsButton.getLayoutParams().height * 3;
+        ArrayList<VendorProduct> basketProducts = new ArrayList<>();
+        RecyclerView basketProductsRecyclerView = view.findViewById(R.id.productsBasketRecyclerView);
 
         RecyclerView.ItemDecoration indentBasketProductsRecyclerView =
                 new RecyclerView.ItemDecoration() {
@@ -94,14 +89,15 @@ public class BasketFragment extends Fragment {
                     basketProducts.clear();
                     for (DataSnapshot curDataSnapshot : snapshot.getChildren()) {
 
-                        Product product = curDataSnapshot.getValue(Product.class);
+                        VendorProduct product = curDataSnapshot.getValue(VendorProduct.class);
                         basketProducts.add(product);
                     }
 
                     try {
 
                         ProductBasketListAdapter productBasketListAdapter =
-                                new ProductBasketListAdapter(getActivity(), basketProducts, MainActivity.getWidthWindow());
+                                new ProductBasketListAdapter(getActivity(), basketProducts,
+                                        MainActivity.getWidthWindow(), buyAllProductsButton);
                         basketProductsRecyclerView.setAdapter(productBasketListAdapter);
                     } catch (Exception e) {
 

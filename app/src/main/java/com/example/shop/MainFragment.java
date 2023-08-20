@@ -51,8 +51,12 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        updateDatabaseSQL(getContext());
-        widthWindow = MainActivity.getWidthWindow();
+
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+            updateDatabaseSQL(getContext());
+            widthWindow = MainActivity.getWidthWindow();
+        }
     }
 
     @Override
@@ -60,10 +64,12 @@ public class MainFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
 
-        parseInfoBlock(view, R.id.topInfoBlock, "ActualInfo");
-        parseProductBlock(view, R.id.mainRecyclerView, "ProductList");
-        parseProductBlock(view, R.id.discountProductRecyclerView, "DiscountProducts");
+            parseInfoBlock(view, R.id.topInfoBlock, "ActualInfo");
+            parseProductBlock(view, R.id.mainRecyclerView, "ActualProducts");
+            parseProductBlock(view, R.id.discountProductRecyclerView, "DiscountProducts");
+        }
 
         return view;
     }
@@ -138,7 +144,7 @@ public class MainFragment extends Fragment {
     private void parseProductBlock(View view, int idRecyclerView, String branchName) {
 
         RecyclerView recyclerView = view.findViewById(idRecyclerView);
-        ArrayList<Product> products = new ArrayList<>();
+        ArrayList<VendorProduct> products = new ArrayList<>();
         RecyclerView.LayoutManager doubleManager
                 = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(doubleManager);
@@ -150,7 +156,7 @@ public class MainFragment extends Fragment {
 
                 for(DataSnapshot curDataSnapshot : snapshot.getChildren()) {
 
-                    Product product = curDataSnapshot.getValue(Product.class);
+                    VendorProduct product = curDataSnapshot.getValue(VendorProduct.class);
                     products.add(product);
                 }
 
@@ -179,7 +185,8 @@ public class MainFragment extends Fragment {
     public static void updateDatabaseSQL(Context context) {
 
         databaseSQL = context.openOrCreateDatabase("basket.db", MODE_PRIVATE, null);
-        databaseSQL.execSQL("CREATE TABLE IF NOT EXISTS user_products(vendorCode TEXT, amount INTEGER, UNIQUE(vendorCode))");
+        databaseSQL.execSQL("CREATE TABLE IF NOT EXISTS user_products(vendorCode TEXT, " +
+                "                                           amount INTEGER, UNIQUE(vendorCode))");
         Cursor query = databaseSQL.rawQuery("SELECT * FROM user_products;", null);
 
         while(query.moveToNext()) {

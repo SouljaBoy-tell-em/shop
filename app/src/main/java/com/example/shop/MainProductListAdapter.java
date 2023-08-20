@@ -32,18 +32,25 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
     private final Context context;
     private final LayoutInflater inflater;
     private ArrayList<Product> products;
-    private ArrayList<Boolean> isPressed;
+    private ArrayList<VendorProduct> vendorProducts;
+    private ArrayList<Boolean> isPressedBasketButton;
+    private ArrayList<Boolean> isPressedFavoriteButton;
     private DatabaseReference firebaseDBRef;
 
-    public MainProductListAdapter(Context context, ArrayList<Product> products) {
+    public MainProductListAdapter(Context context, ArrayList<VendorProduct> vendorProducts) {
 
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-        this.products = products;
+        this.vendorProducts = vendorProducts;
 
-        isPressed = new ArrayList<>();
-        for(int indexIsPressed = 0; indexIsPressed < products.size(); indexIsPressed++)
-            isPressed.add(false);
+        this.products           = new ArrayList<>();
+        isPressedBasketButton   = new ArrayList<>();
+        isPressedFavoriteButton = new ArrayList<>();
+        for(int indexButton = 0; indexButton < vendorProducts.size(); indexButton++) {
+
+            isPressedBasketButton.add(false);
+            isPressedFavoriteButton.add(false);
+        }
     }
 
     public MainProductListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -55,34 +62,31 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
     public void onBindViewHolder(MainProductListAdapter.ViewHolder holder,
                                  @SuppressLint("RecyclerView") int position) {
 
-        firebaseDBRef = FirebaseDatabase
-                        .getInstance()
-                        .getReference("Users")
-                        .child(FirebaseAuth.getInstance().getUid())
-                        .child("Basket");
-        ValueEventListener vel = new ValueEventListener() {
+        firebaseDBRef = FirebaseDatabase.getInstance().getReference("ProductList");
+        ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for(DataSnapshot curSnapshot : snapshot.getChildren()) {
+                for(DataSnapshot curDatasnapshot : snapshot.getChildren()) {
 
-                    Product product = curSnapshot.getValue(Product.class);
-                        if(Objects.equals(product.getVendorCode(), products.get(position).getVendorCode()))
-                            isPressed.set(position, true);
+                    if(Objects.equals(curDatasnapshot.getValue(Product.class).getVendorCode(), vendorProducts.get(position).getVendorCode()))
+                        products.add(curDatasnapshot.getValue(Product.class));
                 }
 
-                createProduct(holder, position);
+                Log.d("PRODUCTS", products.size() + "");
+                parseInfo(holder, isPressedBasketButton, "Basket", position);
+                parseInfo(holder, isPressedFavoriteButton, "Favorite", position);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         };
-        firebaseDBRef.addValueEventListener(vel);
+        firebaseDBRef.addValueEventListener(valueEventListener);
     }
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return vendorProducts.size();
     }
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -91,10 +95,13 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
                        productPrice;
         final ImageView productImage,
                         addRed,
-                        whiteCart;
+                        whiteCart,
+                        favoriteIcon,
+                        favoriteIconPressed;
         final ConstraintLayout mainConstraintButtonPrice,
                                inBasketConstraint,
-                               layoutProduct;
+                               layoutProduct,
+                               favoriteConstraint;
 
         ViewHolder(View view) {
             super(view);
@@ -105,9 +112,12 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
             productImage              = view.findViewById(R.id.productImage);
             addRed                    = view.findViewById(R.id.addRed);
             whiteCart                 = view.findViewById(R.id.whiteCart);
+            favoriteIcon              = view.findViewById(R.id.favouriteIcon);
+            favoriteIconPressed       = view.findViewById(R.id.favouriteIconPressed);
             mainConstraintButtonPrice = view.findViewById(R.id.mainConstraintButtonPrice);
             inBasketConstraint        = view.findViewById(R.id.inBasketConstraint);
             layoutProduct             = view.findViewById(R.id.layoutProduct);
+            favoriteConstraint        = view.findViewById(R.id.favouriteConstraint);
         }
     }
 
@@ -122,27 +132,34 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
         holder.productPrice.setText(product.getPrice() + " ₽");
         holder.productOldPrice.setText(Html.fromHtml("<s>" + product.getOldPrice() + "</s>"));
         holder.inBasketConstraint.setVisibility(View.INVISIBLE);
+        holder.favoriteIconPressed.setVisibility(View.INVISIBLE);
 
-        if(isPressed.get(position) == true) {
+        if(isPressedBasketButton.get(position) == true) {
 
             holder.inBasketConstraint.setVisibility(View.VISIBLE);
             updateButtonAdd(holder, View.INVISIBLE,
                     R.drawable.price_item_product_list_constraint_layout_pressed);
         }
 
+        if(isPressedFavoriteButton.get(position) == true) {
+
+            holder.favoriteIconPressed.setVisibility(View.VISIBLE);
+            holder.favoriteIcon.setVisibility(View.INVISIBLE);
+        }
+
         holder.mainConstraintButtonPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(isPressed.get(position) == false) {
+                if(isPressedBasketButton.get(position) == false) {
 
-                    isPressed.set(position, true);
+                    isPressedBasketButton.set(position, true);
                     FirebaseDatabase.getInstance()
                                     .getReference("Users")
                                     .child(FirebaseAuth.getInstance().getUid())
                                     .child("Basket")
-                                    .child("Product-" + (position + 1))
-                                    .setValue(products.get(position));
+                                    .child(products.get(position).getVendorCode())
+                                    .setValue(products.get(position).getParent());
 
                     holder.inBasketConstraint.setVisibility(View.VISIBLE);
                     updateButtonAddAnimation(holder);
@@ -152,14 +169,14 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
                     return;
                 }
 
-                if (isPressed.get(position) == true) {
+                if (isPressedBasketButton.get(position) == true) {
 
-                    isPressed.set(position, false);
+                    isPressedBasketButton.set(position, false);
                     FirebaseDatabase.getInstance()
                             .getReference("Users")
                             .child(FirebaseAuth.getInstance().getUid())
                             .child("Basket")
-                            .child("Product-" + (position + 1))
+                            .child(products.get(position).getVendorCode())
                             .removeValue();
 
                     holder.inBasketConstraint.setVisibility(View.INVISIBLE);
@@ -169,6 +186,72 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
                 }
             }
         });
+
+        holder.favoriteConstraint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isPressedFavoriteButton.get(position) == false) {
+
+                    isPressedFavoriteButton.set(position, true);
+                    FirebaseDatabase.getInstance()
+                            .getReference("Users")
+                            .child(FirebaseAuth.getInstance().getUid())
+                            .child("Favorite")
+                            .child(products.get(position).getVendorCode())
+                            .setValue(products.get(position).getParent());
+
+                    updateButtonFavoriteAnimation(holder, R.anim.favorite_button_pressed_anim);
+                    holder.favoriteIconPressed.setVisibility(View.VISIBLE);
+                    holder.favoriteIcon.setVisibility(View.INVISIBLE);
+
+                    return;
+                }
+
+                if (isPressedFavoriteButton.get(position) == true) {
+
+                    isPressedFavoriteButton.set(position, false);
+                    FirebaseDatabase.getInstance()
+                            .getReference("Users")
+                            .child(FirebaseAuth.getInstance().getUid())
+                            .child("Favorite")
+                            .child(products.get(position).getVendorCode())
+                            .removeValue();
+
+                    updateButtonFavoriteAnimation(holder, R.anim.favorite_button_repressed_anim);
+                    holder.favoriteIconPressed.setVisibility(View.INVISIBLE);
+                    holder.favoriteIcon.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void parseInfo(MainProductListAdapter.ViewHolder holder, ArrayList<Boolean> isPressed,
+                                                                    String parseIndex, int position) {
+
+        firebaseDBRef = FirebaseDatabase
+                .getInstance()
+                .getReference("Users")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child(parseIndex);
+        ValueEventListener vel = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for(DataSnapshot curSnapshot : snapshot.getChildren()) {
+
+                    Product product = curSnapshot.getValue(Product.class);
+                    if(Objects.equals(product.getVendorCode(), products.get(position).getVendorCode()))
+                        isPressed.set(position, true);
+                }
+
+                createProduct(holder, position);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        };
+        firebaseDBRef.addValueEventListener(vel);
     }
 
     private void updateButtonAdd(MainProductListAdapter.ViewHolder holder, int status,
@@ -182,8 +265,15 @@ public class MainProductListAdapter extends RecyclerView.Adapter<MainProductList
 
     private void updateButtonAddAnimation(MainProductListAdapter.ViewHolder holder) {
 
-        Animation buttonPressed = AnimationUtils.loadAnimation
-                (context, R.anim.constraint_button_price_item_anim);
-        holder.mainConstraintButtonPrice.startAnimation(buttonPressed);
+            Animation buttonPressed = AnimationUtils.loadAnimation
+                    (context, R.anim.constraint_button_price_item_anim);
+            holder.mainConstraintButtonPrice.startAnimation(buttonPressed);
+    }
+
+    private void updateButtonFavoriteAnimation(MainProductListAdapter.ViewHolder holder, int anim) {
+
+        Animation favoriteButtonAnim =
+                AnimationUtils.loadAnimation(context, anim);
+        holder.favoriteIconPressed.startAnimation(favoriteButtonAnim);
     }
 }

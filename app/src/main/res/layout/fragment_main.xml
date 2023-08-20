@@ -15,7 +15,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="125dp"
+            android:layout_height="125sp"
             android:background="@color/white">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -26,13 +26,13 @@
                 app:toolbarId="@+id/toolbar"
                 app:layout_collapseMode="pin"
                 android:fitsSystemWindows="true"
-                app:scrimAnimationDuration="0">
+                app:scrimAnimationDuration="500">
 
                 <ImageView
                     android:id="@+id/imageLogo"
-                    android:layout_width="170dp"
-                    android:layout_height="80dp"
-                    android:layout_marginStart="5dp"
+                    android:layout_width="170sp"
+                    android:layout_height="80sp"
+                    android:layout_marginStart="5sp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_gravity="top"
@@ -48,8 +48,8 @@
                         android:id="@+id/searchProduct"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5sp"
+                        android:layout_marginEnd="5sp"
                         android:background="@drawable/edittext_explore_background"
                         android:queryHint="Поиск"
                         app:layout_collapseMode="pin"
