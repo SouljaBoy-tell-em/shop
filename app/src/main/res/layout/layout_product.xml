@@ -6,33 +6,145 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/productImage"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/productName"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/productImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/productName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/favouriteConstraint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10sp"
+            android:layout_marginEnd="10sp"
+            app:layout_constraintEnd_toEndOf="@+id/productImage"
+            app:layout_constraintTop_toTopOf="@+id/productImage">
+
+            <ImageView
+                android:id="@+id/favouriteIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/favorite_icon_empty"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ImageView
+                android:id="@+id/favouriteIconPressed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/favorite_icon_empty_pressed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/productName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:layout_marginStart="5sp"
+            android:layout_marginTop="5sp"
             android:text="product name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/productImage">
+            app:layout_constraintTop_toBottomOf="@id/productImage">
 
         </TextView>
 
-    <TextView
-        android:id="@+id/productPrice"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainConstraintButtonPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="product price"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/productName">
+        android:layout_marginBottom="10sp"
+        android:background="@drawable/price_item_product_list_constraint_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/productName"
+        app:layout_constraintTop_toBottomOf="@id/productName">
 
-    </TextView>
+        <TextView
+            android:id="@+id/productOldPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OLD"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="5sp"
+            android:layout_marginBottom="5sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/productPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3sp"
+            android:text="NEW"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/red"
+            app:layout_constraintBottom_toBottomOf="@+id/productOldPrice"
+            app:layout_constraintLeft_toRightOf="@id/productOldPrice"
+            app:layout_constraintTop_toTopOf="@+id/productOldPrice" />
 
+        <ImageView
+            android:id="@+id/addRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/add_red"
+            android:layout_marginEnd="5sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/productPrice"
+            app:layout_constraintStart_toEndOf="@id/productPrice"
+            app:layout_constraintTop_toTopOf="@+id/productPrice" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/inBasketConstraint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/productOldPrice"
+            app:layout_constraintBottom_toBottomOf="@id/productOldPrice"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/whiteCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/white_cart" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text="В КОРЗИНЕ"
+                android:layout_marginStart="5sp"
+                app:layout_constraintBottom_toBottomOf="@id/whiteCart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/whiteCart"
+                app:layout_constraintTop_toTopOf="@id/whiteCart" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

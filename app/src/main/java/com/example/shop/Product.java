@@ -1,80 +1,116 @@
 package com.example.shop;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Constraints;
-
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Product {
+public class Product extends VendorProduct implements Serializable {
 
     private String name;
     private int price;
+    private int oldPrice;
     private String size;
-    private String color;
+    private int color;
     private String resourceDrawable;
-    private LayoutInflater layoutInflater;
-    private int sizeScreen;
-    public int imageWidth;
-    public Product(String name, int price, String size, String color, String resourceDrawable, LayoutInflater layoutInflater,
-                   int sizeScreen) {
-
-        this.name             =             name;
-        this.price            =            price;
-        this.size             =             size;
-        this.color            =            color;
-        this.resourceDrawable = resourceDrawable;
-        this.layoutInflater   =   layoutInflater;
-        this.sizeScreen       =       sizeScreen;
-    }
-
+    private ArrayList<VendorProduct> analogProducts;
+    private ArrayList<String> characteristicKeys;
+    private Map<String, ArrayList<String>> characteristics;
     public Product() {}
+    public Product(VendorProduct vendorProduct) {
 
-    public View CreateProduct() {
-
-        View product = this.layoutInflater.inflate(R.layout.layout_product, null, false);
-        product.setId(View.generateViewId());
-        ImageView imageView = (ImageView) product.findViewById(R.id.productImage);
-        TextView productName = (TextView)  product.findViewById(R.id.productName);
-        TextView productPrice = (TextView) product.findViewById(R.id.productPrice);
-
-        Picasso.get().load(this.resourceDrawable).into(imageView);
-        imageView.getLayoutParams().width  = this.sizeScreen / 2 - 50;
-        imageView.getLayoutParams().height = this.sizeScreen / 2 - 50;
-        this.imageWidth = imageView.getLayoutParams().width;
-
-        productName.setText(this.name);
-        productName.setTextSize(12);
-        productPrice.setText(this.price + " ₽");
-        productPrice.setTextSize(12);
-
-        return product;
+        super(vendorProduct);
+        this.analogProducts     = new ArrayList<>();
+        this.characteristics    = new HashMap<>();
+        this.characteristicKeys = new ArrayList<>();
     }
-    public String getName()  { return this.name;}
-    public int getPrice() { return this.price;}
-    public String getSize() {return this.size;}
-    public String getColor() {return this.color;}
-    public String getResourceDrawable() {return this.resourceDrawable;}
-    public void setName(String name) {this.name = name;}
-    public void setPrice(int price) {this.price = price;}
-    public void setSize(String size) {this.size = size;}
-    public void setColor(String color) {this.color = color;}
-    public void setResourceDrawable(String resourceDrawable) {this.resourceDrawable = resourceDrawable;}
+    public Product(String name, int price, int oldPrice, String size, int color,
+                   String resourceDrawable, int vendorCode, int amount,
+                   ArrayList<VendorProduct> analogProducts,
+                   Map<String, ArrayList<String>> characteristics,
+                   ArrayList<String> characteristicKeys) {
+
+        super(vendorCode, amount);
+        this.name               =               name;
+        this.price              =              price;
+        this.oldPrice           =           oldPrice;
+        this.size               =               size;
+        this.color              =              color;
+        this.resourceDrawable   =   resourceDrawable;
+        this.analogProducts     =     analogProducts;
+        this.characteristics    =    characteristics;
+        this.characteristicKeys = characteristicKeys;
+    }
+
+    public Product(Product product) {
+
+        super(product.getVendorCode(), product.getAmount());
+        this.name               = product.getName();
+        this.price              = product.getPrice();
+        this.oldPrice           = product.getOldPrice();
+        this.size               = product.getSize();
+        this.color              = product.getColor();
+        this.resourceDrawable   = product.getResourceDrawable();
+        this.analogProducts     = product.getAnalogProducts();
+        this.characteristics    = product.getCharacteristics();
+        this.characteristicKeys = product.getCharacteristicKeys();
+    }
+
+    public ArrayList<VendorProduct> getAnalogProducts() {
+        return this.analogProducts;
+    }
+    public ArrayList<String> getCharacteristicKeys() {
+        return this.characteristicKeys;
+    }
+    public Map<String, ArrayList<String>> getCharacteristics() {
+        return this.characteristics;
+    }
+    public int getColor() {
+        return this.color;
+    }
+    public String getName()  {
+        return this.name;
+    }
+    public int getOldPrice() {
+        return this.oldPrice;
+    }
+    public int getPrice() {
+        return this.price;
+    }
+    public String getSize() {
+        return this.size;
+    }
+    public String getResourceDrawable() {
+        return this.resourceDrawable;
+    }
+    public void setAnalogProducts(ArrayList<VendorProduct> analogProducts) {
+        this.analogProducts = analogProducts;
+    }
+    public void setCharacteristicKeys(ArrayList<String> characteristicKeys) {
+        this.characteristicKeys = characteristicKeys;
+    }
+    public void setCharacteristics(Map<String, ArrayList<String>> characteristics) {
+        this.characteristics = characteristics;
+    }
+    public void setColor(int color) {
+        this.color = color;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setOldPrice(int oldPrice) {
+        this.oldPrice = oldPrice;
+    }
+    public void setPrice(int price) {
+        this.price = price;
+    }
+    public void setSize(String size) {
+        this.size = size;
+    }
+    public void setResourceDrawable(String resourceDrawable) {
+        this.resourceDrawable = resourceDrawable;
+    }
+    public VendorProduct getParent() {
+        return new VendorProduct(this.getVendorCode(), this.getAmount());
+    }
 }

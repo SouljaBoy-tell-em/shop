@@ -4,13 +4,12 @@
     <item
         android:id="@+id/mainListNavigationBar"
         android:title="Главная"
-        android:icon="@drawable/list_icon" />
-
+        android:icon="@drawable/home_icon" />
 
     <item
-        android:id="@+id/discountNavigationBar"
-        android:title="Скидки"
-        android:icon="@drawable/discount_icon"/>
+        android:id="@+id/categoryNavigationBar"
+        android:title="Каталог"
+        android:icon="@drawable/category_search_icon" />
 
     <item
         android:id="@+id/basketNavigationBar"

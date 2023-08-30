@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content" android:layout_width="match_parent">
+
+<androidx.core.widget.NestedScrollView
+     android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:orientation="vertical"
+    app:behavior_hideable="true">
+
+
+    <ImageView
+        android:id="@+id/productImage"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginTop="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/productName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product name"
+        android:textStyle="bold"
+        android:layout_marginTop="10sp"
+        android:textSize="25sp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/productImage" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/analogProductsRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        app:layout_constraintStart_toStartOf="@id/productName"
+        app:layout_constraintTop_toBottomOf="@id/productName"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/characteristicsConstraint"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_marginTop="10sp"
+        app:layout_constraintTop_toBottomOf="@id/analogProductsRecyclerView"
+        app:layout_constraintStart_toStartOf="@id/analogProductsRecyclerView"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/priceLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/productName"
+        app:layout_constraintTop_toBottomOf="@id/characteristicsConstraint">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/productOldPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Old price"
+            android:textColor="@color/red"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/productPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:text="Price"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/productOldPrice"
+            app:layout_constraintStart_toEndOf="@id/productOldPrice"
+            app:layout_constraintTop_toTopOf="@id/productOldPrice" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/productSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Balance — американский спортивный производитель, ведущий деятельность с 1906 года. Это настоящая легенда спортивной экипировки, бренд, который одним из первых начал создавать специализированную обувь для занятий спортом. За долгие годы New Balance закрепил за собой статус одного из главных производителей товаров для спорта. При этом огромное внимание бренд уделяет повседневной коллекции, в которую входят полюбившиеся классические модели и современные кроссовки, созданные с применением передовых разработок компании. New Balance — американский спортивный производитель, ведущий деятельность с 1906 года. Это настоящая легенда спортивной экипировки, бренд, который одним из первых начал создавать специализированную обувь для занятий спортом. За долгие годы New Balance закрепил за собой статус одного из главных производителей товаров для спорта. При этом огромное внимание бренд уделяет повседневной коллекции, в которую входят полюбившиеся классические модели и современные кроссовки, созданные с применением передовых разработок компании. New Balance — американский спортивный производитель, ведущий деятельность с 1906 года. Это настоящая легенда спортивной экипировки, бренд, который одним из первых начал создавать специализированную обувь для занятий спортом. За долгие годы New Balance закрепил за собой статус одного из главных производителей товаров для спорта. При этом огромное внимание бренд уделяет повседневной коллекции, в которую входят полюбившиеся классические модели и современные кроссовки, созданные с применением передовых разработок компании. New Balance — американский спортивный производитель, ведущий деятельность с 1906 года. Это настоящая легенда спортивной экипировки, бренд, который одним из первых начал создавать специализированную обувь для занятий спортом. За долгие годы New Balance закрепил за собой статус одного из главных производителей товаров для спорта. При этом огромное внимание бренд уделяет повседневной коллекции, в которую входят полюбившиеся классические модели и современные кроссовки, созданные с применением передовых разработок компании. New Balance — американский спортивный производитель, ведущий деятельность с 1906 года. Это настоящая легенда спортивной экипировки, бренд, который одним из первых начал создавать специализированную обувь для занятий спортом. За долгие годы New Balance закрепил за собой статус одного из главных производителей товаров для спорта. При этом огромное внимание бренд уделяет повседневной коллекции, в которую входят полюбившиеся классические модели и современные кроссовки, созданные с применением передовых разработок компании. New Balance — американский спортивный производитель, ведущий деятельность с 1906 года. Это настоящая легенда спортивной экипировки, бренд, который одним из первых начал создавать специализированную обувь для занятий спортом. За долгие годы New Balance закрепил за собой статус одного из главных производителей товаров для спорта. При этом огромное внимание бренд уделяет повседневной коллекции, в которую входят полюбившиеся классические модели и современные кроссовки, созданные с применением передовых разработок компании. "
+        android:textColor="@color/white"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatButton"
+        app:layout_constraintStart_toStartOf="@+id/appCompatButton"
+        app:layout_constraintTop_toBottomOf="@+id/priceLayout" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/appCompatButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginBottom="40sp"
+        android:background="@drawable/bottom_sheet_item_order_button"
+        android:text="В КОРЗИНУ"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productSummary" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
